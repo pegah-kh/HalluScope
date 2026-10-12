@@ -1,0 +1,74 @@
+[
+  {
+    "file": "cpq.jpg",
+    "type": "cpq",
+    "model": "Qwen2-VL-7B",
+    "id": 11556,
+    "prompt": "What color is the spatula resting near the skillet?",
+    "chosen": "There is no spatula in the image.",
+    "rejected": "The spatula resting near the skillet is black."
+  },
+  {
+    "file": "tpq.jpg",
+    "type": "tpq",
+    "model": "Qwen2-VL-7B",
+    "id": 51609,
+    "prompt": "What color is the bird?",
+    "chosen": "The bird in the picture has a mix of colors. It has a black head with a white stripe, a yellow body with orange and red accents, and a black beak.",
+    "rejected": "The bird is not shown in the image."
+  },
+  {
+    "file": "pope.jpg",
+    "type": "pope",
+    "model": "Qwen2-VL-7B",
+    "id": 2615,
+    "prompt": "Do you see a elf on the shelf in the picture?",
+    "chosen": "Yes, there is an elf on the shelf in the picture. The elf is sitting next to a snowman.",
+    "rejected": "No, there is no elf on the shelf in the picture. The image shows a snowman and a toy figure dressed in red and white clothing."
+  },
+  {
+    "file": "pope_negative.jpg",
+    "type": "pope_negative",
+    "model": "Qwen2-VL-7B",
+    "id": 6242,
+    "prompt": "Would you say there's a ladder visible?",
+    "chosen": "There is no ladder visible in the image.",
+    "rejected": "Yes, there is a ladder visible in the image. It is located on the side of the building with the small house on the roof."
+  },
+  {
+    "file": "attribute.jpg",
+    "type": "attribute",
+    "model": "Qwen2-VL-7B",
+    "id": 59881,
+    "prompt": "What is the condition of the road surface?",
+    "chosen": "The road surface appears to be wet, likely due to recent or ongoing rain. The wet conditions are indicated by the shiny, reflective surface and the presence of water droplets.",
+    "rejected": "The road surface appears dry and dusty, with a matte finish and no visible reflections or puddles; small cracks and loose gravel suggest it has not been exposed to recent rain."
+  },
+  {
+    "file": "description_unilateral.jpg",
+    "type": "description_unilateral",
+    "model": "LLaVA-1.5-7B",
+    "id": 8047,
+    "prompt": "Could you offer a thorough description of the image?",
+    "chosen": "The image features a man playing a trumpet in a clean studio setting. He is the main subject of the image, and his focus is on the trumpet he is holding. The man appears to be a musician, possibly practicing or performing a piece of music. The studio environment suggests that the image was taken in a controlled and professional setting, possibly for a recording or a live performance.",
+    "rejected": "The image features a man playing a trombone, with the instrument held in his hands. He is wearing a gray shirt and appears to be focused on his performance. The man is the main subject of the image, occupying a significant portion of the frame."
+  },
+  {
+    "file": "description_contrastive.jpg",
+    "type": "description_contrastive",
+    "model": "LLaVA-1.5-7B",
+    "id": 55707,
+    "prompt": "Provide a detailed description of the image?",
+    "chosen": "The image features a dense forest with a large number of trees, including a couple of very tall trees. The forest is filled with greenery, creating a lush and serene atmosphere. The trees are tall and majestic, with some appearing to be taller than the others. The forest is a perfect example of a natural environment, providing a sense of tranquility and beauty.",
+    "rejected": "The image features a lush green forest with a trail running through it. Along the trail, there is a bench for people to sit and enjoy the scenery. A stream can be seen nearby, adding to the serene and natural atmosphere of the forest. The trees surrounding the trail and bench are tall and green, creating a picturesque and peaceful environment."
+  },
+  {
+    "file": "description_injection.jpg",
+    "type": "description_injection",
+    "model": "Qwen2-VL-7B",
+    "id": 14126,
+    "prompt": "Can you describe what you see in the image?",
+    "chosen": "The image depicts a view looking up through the canopy of tall trees, likely in a forest or wooded area. The perspective is from inside a tent, as indicated by the green fabric at the top of the image. The trees are densely packed, with their leaves forming a lush, green canopy that filters the sunlight. The sky is visible through the gaps in the leaves, showing a clear blue sky with no clouds. The overall scene conveys a sense of tranquility and connection with nature.",
+    "rejected": "The image depicts a view looking up through the canopy of tall trees, likely in a forest or wooded area. The scene includes a campfire, which is positioned in the lower left corner of the image. The campfire appears to be surrounded by a few logs, and it is emitting a warm glow, suggesting that it is being used for warmth or cooking. The surrounding area is relatively clear, with no visible vegetation or other objects in the immediate vicinity of the campfire. The overall atmosphere of the image is serene and peaceful, evoking a sense of tranquility and connection with nature."
+  }
+]

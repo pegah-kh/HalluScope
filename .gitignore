@@ -1,0 +1,7 @@
+__pycache__
+.sixth
+tmp/
+# Pipeline outputs, written at runtime; the released test sets are in halluscope/benchmark/
+halluscope/data_files/
+# SLURM job logs
+*.out

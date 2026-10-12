@@ -1,0 +1,27 @@
+# Main environment: every step except Florence-2 detection (see environment_florence.yml).
+#   conda env create -f environment.yml
+#   conda activate halluscope
+# Versions are those the released pipeline was run with. torch >= 2.6 is required: recent transformers refuses to
+# load .bin checkpoints with older torch (CVE-2025-32434), which affects BGE-M3 in stage 4.
+name: halluscope
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - --extra-index-url https://download.pytorch.org/whl/cu128
+      - torch==2.11.0
+      - torchvision==0.26.0
+      - transformers==5.19.0
+      - accelerate==1.15.0
+      - qwen-vl-utils==0.0.14
+      - pillow==12.3.0
+      - numpy==2.4.6
+      - tqdm==4.70.1
+      - datasets==5.1.0
+      - pandas==3.0.6
+      - sentence-transformers==6.1.0
+      - scikit-learn==1.9.1
+      - openai==3.29.0
+      - pydantic==2.14.1

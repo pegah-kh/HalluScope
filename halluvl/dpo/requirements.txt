@@ -1,0 +1,17 @@
+--extra-index-url https://download.pytorch.org/whl/cu121
+torch==2.3.1
+torchvision==0.18.1
+transformers==4.47.1
+accelerate==1.1.1
+qwen-vl-utils==0.0.8
+diffusers==0.31.0
+sentencepiece
+protobuf
+spacy==3.7.5
+click
+en_core_web_trf @ https://github.com/explosion/spacy-models/releases/download/en_core_web_trf-3.7.3/en_core_web_trf-3.7.3-py3-none-any.whl
+openai>=1.92
+pydantic>=2
+numpy<2
+pillow
+tqdm
