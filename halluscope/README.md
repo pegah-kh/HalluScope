@@ -10,7 +10,7 @@ Starting from a diverse pool of COCO image captions, HalluScope annotates the ob
 
 ## Benchmark versions
 
-The final test sets are in [`benchmark/`](benchmark/README.md) (also on the Hugging Face Hub), in two versions:
+The final test sets are in [`benchmark/`](benchmark/README.md), also on Hugging Face as [PekhPekhPekh/HalluScope](https://huggingface.co/datasets/PekhPekhPekh/HalluScope), in two versions:
 
 | Version | What it is |
 |---|---|
@@ -182,7 +182,7 @@ Submit from `halluscope/`. The `--merge` commands refuse to merge while a part h
 1. **`generate_adversary_questions.py`** — asks `gpt-5-mini` to write, per sample, a presupposition question about the absent object (`adversary_question`) and a grounded question about the present object (`truth_question`), given the first COCO caption. To keep questions varied, each request lists questions already written for the most similar captions (BGE-M3 embeddings) as questions to avoid. Samples go 20 per request; question pairs are matched to samples by position, so a request is retried if the LLM returns a different number of pairs. Progress is saved as it goes, so a rerun only generates what is missing (e.g. after failed requests) → `data_files/coco_{florence,instances}_difficult_samples_adversary_questions.json`, in input order.
 2. **`generate_description_questions.py`** — attaches a randomly chosen (seeded) open-ended "describe this image" prompt → `data_files/{florence,instances}_description_questions.json`.
 3. **`generate_pope_questions.py`** — generates three POPE-style yes/no presence questions per image from 7 templates (seeded; with the right article, and "are" for plural objects): about the present object, the contextual absent object, and the random absent object → `data_files/{florence,instances}_pope_questions.json` (+ `_negative.json`, `_random.json`).
-4. **`select_balanced_set_samples_category.py`** — describes each adversary question by its intent (color, material, position, … from keyword patterns) and its absent object, embeds both, and runs K-Center Greedy selection to pick a diverse, category-balanced set of images (default 3,000 per subset); the four question sets of these images form the test set → `data_files/test_dataset/{adversary_presupposition,real_recognition,adversary_recognition,random_recognition}_{florence,instances}_balanced_w_category.json`.
+4. **`select_test_set.py`** — describes each adversary question by its intent (color, material, position, … from keyword patterns) and its absent object, embeds both, and runs K-Center Greedy selection to pick a diverse, category-balanced set of images (default 3,000 per subset); the four question sets of these images form the test set → `data_files/test_dataset/{adversary_presupposition,real_recognition,adversary_recognition,random_recognition}_{florence,instances}.json`.
 
 ```bash
 bash src/4_question_generation/script.sh
@@ -196,7 +196,7 @@ These four files per subset (8 total) are the final HalluScope benchmark.
 
 `src/evaluation/` runs a vision-language model on the test sets and scores its answers. It is separate from building the benchmark: it only needs `benchmark/` (choose the version with `--version v1|v2`, default v2) and the COCO `train2017/` images.
 
-The test sets, each for the `florence` and `instances` subsets (`{task}_{subset}_balanced_w_category.json`):
+The test sets, each for the `florence` and `instances` subsets (`{task}_{subset}.json`):
 
 | Task | Question about | Expected answer |
 |---|---|---|

@@ -25,5 +25,5 @@ done
 
 
 # 4. SELECT A CATEGORY-BALANCED, DIVERSE TEST SET (3,000 IMAGES PER SUBSET).
-# Writes data_files/test_dataset/{adversary_presupposition,real_recognition,adversary_recognition,random_recognition}_{florence,instances}_balanced_w_category.json
-python src/4_question_generation/select_balanced_set_samples_category.py --subsets florence instances
+# Writes data_files/test_dataset/{adversary_presupposition,real_recognition,adversary_recognition,random_recognition}_{florence,instances}.json
+python src/4_question_generation/select_test_set.py --subsets florence instances

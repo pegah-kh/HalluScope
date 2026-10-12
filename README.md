@@ -12,7 +12,7 @@ The paper has two contributions, and this repository has one part for each:
 
 | | What it is | Released | Code |
 |---|---|---|---|
-| [**HalluScope**](#halluscope) | A benchmark that separates the causes of hallucination in large vision-language models (LVLMs) | Test sets in [`halluscope/benchmark/`](halluscope/benchmark/README.md) | [`halluscope/`](halluscope/README.md): builds the benchmark and evaluates a model on it |
+| [**HalluScope**](#halluscope) | A benchmark that separates the causes of hallucination in large vision-language models (LVLMs) | Test sets in [`halluscope/benchmark/`](halluscope/benchmark/README.md) and on [Hugging Face](https://huggingface.co/datasets/PekhPekhPekh/HalluScope) | [`halluscope/`](halluscope/README.md): builds the benchmark and evaluates a model on it |
 | [**HalluVL-DPO**](#halluvl-dpo) | A preference-optimization framework and dataset that reduces hallucinations caused by the text prompt | Preference datasets on [Hugging Face](https://huggingface.co/datasets/PekhPekhPekh/HalluVL-DPO) | [`halluvl/dpo/`](halluvl/dpo/README.md): the pipeline that builds the preference data |
 
 ## The problem
@@ -38,7 +38,7 @@ Adversarial objects are chosen with co-occurrence statistics (pointwise mutual i
 
 **Finding.** Across InternVL3.5-8B, Molmo-7B-D, Qwen2-VL-7B, Qwen2.5-VL-7B and LLaVA-1.5-7B, positive and random recognition stay above 85%: perception is mostly fine. Accuracy drops by about 8–37 points on adversarial objects, and by 25–85 points when the question presupposes the object. **The text prompt is the strongest driver of hallucination**, more than co-occurrence priors or the vision backbone.
 
-**Get the benchmark:** [`halluscope/benchmark/`](halluscope/benchmark/README.md) has two versions: **v1**, used for all results in the paper, and **v2**, regenerated with the released code. Images are from COCO `train2017`.
+**Get the benchmark:** [`halluscope/benchmark/`](halluscope/benchmark/README.md), also on Hugging Face as [PekhPekhPekh/HalluScope](https://huggingface.co/datasets/PekhPekhPekh/HalluScope), has two versions: **v1**, used for all results in the paper, and **v2**, regenerated with the released code. Images are from COCO `train2017`.
 
 **Code:** [`halluscope/`](halluscope/README.md) has the evaluation scripts (run any Hugging Face vision-language model on the benchmark and score it) and the full pipeline that builds the benchmark.
 

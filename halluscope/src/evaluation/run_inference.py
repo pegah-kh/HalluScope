@@ -4,7 +4,7 @@ Runs a Hugging Face vision-language model on the HalluScope test sets and saves 
 Works with chat VLMs that load with AutoModelForImageTextToText and whose processor has a chat template
 (e.g. Qwen2.5-VL, Qwen3.5, LLaVA-1.5-hf, InternVL-hf). Answers are generated greedily.
 
-Reads:  benchmark/{version}/{task}_{subset}_balanced_w_category.json (v1: the paper's test set, v2: regenerated with
+Reads:  benchmark/{version}/{task}_{subset}.json (v1: the paper's test set, v2: regenerated with
         this code), or --test_dir (e.g. data_files/test_dataset, the output of src/4_question_generation)
 Writes: {output_dir}/{run_name}/{task}_{subset}.jsonl, one line per question: the test item plus
         "task", "subset" and "prediction" (the model's answer). This is the input of the evaluation scripts.
@@ -29,7 +29,7 @@ SUBSETS = ["florence", "instances"]
 
 
 def test_file(test_dir, task, subset):
-    return os.path.join(test_dir, f"{task}_{subset}_balanced_w_category.json")
+    return os.path.join(test_dir, f"{task}_{subset}.json")
 
 
 @torch.no_grad()

@@ -9,28 +9,28 @@ configs:
   - config_name: v2_florence
     default: true
     data_files:
-      - {split: adversary_presupposition, path: v2/adversary_presupposition_florence_balanced_w_category.json}
-      - {split: real_recognition, path: v2/real_recognition_florence_balanced_w_category.json}
-      - {split: adversary_recognition, path: v2/adversary_recognition_florence_balanced_w_category.json}
-      - {split: random_recognition, path: v2/random_recognition_florence_balanced_w_category.json}
+      - {split: adversary_presupposition, path: v2/adversary_presupposition_florence.json}
+      - {split: real_recognition, path: v2/real_recognition_florence.json}
+      - {split: adversary_recognition, path: v2/adversary_recognition_florence.json}
+      - {split: random_recognition, path: v2/random_recognition_florence.json}
   - config_name: v2_instances
     data_files:
-      - {split: adversary_presupposition, path: v2/adversary_presupposition_instances_balanced_w_category.json}
-      - {split: real_recognition, path: v2/real_recognition_instances_balanced_w_category.json}
-      - {split: adversary_recognition, path: v2/adversary_recognition_instances_balanced_w_category.json}
-      - {split: random_recognition, path: v2/random_recognition_instances_balanced_w_category.json}
+      - {split: adversary_presupposition, path: v2/adversary_presupposition_instances.json}
+      - {split: real_recognition, path: v2/real_recognition_instances.json}
+      - {split: adversary_recognition, path: v2/adversary_recognition_instances.json}
+      - {split: random_recognition, path: v2/random_recognition_instances.json}
   - config_name: v1_florence
     data_files:
-      - {split: adversary_presupposition, path: v1/adversary_presupposition_florence_balanced_w_category.json}
-      - {split: real_recognition, path: v1/real_recognition_florence_balanced_w_category.json}
-      - {split: adversary_recognition, path: v1/adversary_recognition_florence_balanced_w_category.json}
-      - {split: random_recognition, path: v1/random_recognition_florence_balanced_w_category.json}
+      - {split: adversary_presupposition, path: v1/adversary_presupposition_florence.json}
+      - {split: real_recognition, path: v1/real_recognition_florence.json}
+      - {split: adversary_recognition, path: v1/adversary_recognition_florence.json}
+      - {split: random_recognition, path: v1/random_recognition_florence.json}
   - config_name: v1_instances
     data_files:
-      - {split: adversary_presupposition, path: v1/adversary_presupposition_instances_balanced_w_category.json}
-      - {split: real_recognition, path: v1/real_recognition_instances_balanced_w_category.json}
-      - {split: adversary_recognition, path: v1/adversary_recognition_instances_balanced_w_category.json}
-      - {split: random_recognition, path: v1/random_recognition_instances_balanced_w_category.json}
+      - {split: adversary_presupposition, path: v1/adversary_presupposition_instances.json}
+      - {split: real_recognition, path: v1/real_recognition_instances.json}
+      - {split: adversary_recognition, path: v1/adversary_recognition_instances.json}
+      - {split: random_recognition, path: v1/random_recognition_instances.json}
 ---
 
 # HalluScope benchmark
@@ -63,15 +63,19 @@ What changed in v2: captions and verification with Qwen3.5-9B; Florence label cl
 
 ## Format
 
-Each file is a JSON array; each item is:
+Each file is a JSON array; each item is, for example (v2, `adversary_presupposition`, `instances`; the image shows a slice of cake with a fork, and no knife):
+
+<img src="https://s3.amazonaws.com/images.cocodataset.org/train2017/000000448600.jpg" alt="COCO image 000000448600: a slice of cake on a plate, with a fork" width="280">
+
+<sub>COCO image 000000448600 (from Flickr), licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/2.0/">CC BY-NC-SA 2.0</a>.</sub>
 
 ```json
 {
-  "image": "000000212704.jpg",
-  "present_object": "woman",
-  "absent_object": "bow and arrow",
-  "random_object": "hotdog",
-  "text": "What color is the bow and arrow in the scene?"
+  "image": "000000448600.jpg",
+  "present_object": "fork",
+  "absent_object": "knife",
+  "random_object": "toilet",
+  "text": "What material is the knife beside the plate made of?"
 }
 ```
 
@@ -82,7 +86,7 @@ Each file is a JSON array; each item is:
 ```python
 from datasets import load_dataset
 
-questions = load_dataset("<hf-user>/HalluScope", "v2_florence", split="adversary_presupposition")
+questions = load_dataset("PekhPekhPekh/HalluScope", "v2_florence", split="adversary_presupposition")
 ```
 
 Or use the JSON files directly with the evaluation scripts of the [HalluScope code](https://github.com/pegah-kh/halluscope) (`src/evaluation`, `--version v1|v2`).

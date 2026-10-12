@@ -11,7 +11,7 @@ Reads, per subset (florence, instances), in data_files/:
   coco_{subset}_difficult_samples_adversary_questions.json       (generate_adversary_questions.py)
   {subset}_pope_questions{,_negative,_random}.json               (generate_pope_questions.py)
 Writes, in data_files/test_dataset/ (JSON arrays of {image, present_object, absent_object, random_object, text}):
-  {adversary_presupposition,real_recognition,adversary_recognition,random_recognition}_{subset}_balanced_w_category.json
+  {adversary_presupposition,real_recognition,adversary_recognition,random_recognition}_{subset}.json
 """
 import os
 import json
@@ -169,7 +169,7 @@ if __name__ == "__main__":
                 }
                 for q in questions if q["img_filename"] in selected_images
             ]
-            save_path = output_dir / f"{test_set}_{subset}_balanced_w_category.json"
+            save_path = output_dir / f"{test_set}_{subset}.json"
             with open(save_path, "w", encoding="utf-8") as f:
                 json.dump(items, f, indent=2, ensure_ascii=False)
             print(f"{len(items)} {test_set} questions -> {save_path}")
