@@ -6,7 +6,7 @@
 
 [![arXiv](https://img.shields.io/badge/arXiv-2604.21911-b31b1b?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2604.21911)
 [![Project page](https://img.shields.io/badge/Project-page-0a66c2?logo=googlechrome&logoColor=white)](https://pegah-kh.github.io/projects/prompts-override-vision/)
-![NeurIPS 2026](https://img.shields.io/badge/NeurIPS-2026-6f42c1)
+
 
 Pegah Khayatan, Jayneel Parekh, Arnaud Dapogny, Mustafa Shukor, Alasdair Newson, Matthieu Cord
 (ISIR, Sorbonne Université · Valeo.ai)
