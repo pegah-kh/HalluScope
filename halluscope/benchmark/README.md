@@ -33,6 +33,8 @@ configs:
       - {split: random_recognition, path: v1/random_recognition_instances.json}
 ---
 
+![HalluScope](assets/halluscope_logo.png)
+
 # HalluScope benchmark
 
 HalluScope tests *why* a vision-language model hallucinates objects. Each image comes with four questions:
