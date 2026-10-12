@@ -8,9 +8,6 @@
 [![Project page](https://img.shields.io/badge/Project-page-0a66c2?logo=googlechrome&logoColor=white)](https://pegah-kh.github.io/projects/prompts-override-vision/)
 
 
-Pegah Khayatan, Jayneel Parekh, Arnaud Dapogny, Mustafa Shukor, Alasdair Newson, Matthieu Cord
-(ISIR, Sorbonne Université · Valeo.ai)
-
 The paper has two contributions, and this repository has one part for each:
 
 | | What it is | Released | Code |
