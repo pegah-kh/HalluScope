@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/halluscope_logo.png" alt="HalluScope" width="360">
+  <img src="docs/images/halluscope_logo.png" alt="HalluScope" width="600">
 </p>
 
 # When Prompts Override Vision: Prompt-Induced Hallucinations in LVLMs
@@ -11,9 +11,14 @@
 Pegah Khayatan, Jayneel Parekh, Arnaud Dapogny, Mustafa Shukor, Alasdair Newson, Matthieu Cord
 (ISIR, Sorbonne Université · Valeo.ai)
 
-This repository contains **HalluScope**, a benchmark that finds out *why* vision-language models (LVLMs) describe things that are not in the image, and **HalluVL-DPO**, a training dataset and method that reduces one of the main causes.
+The paper has two contributions, and this repository has one part for each:
 
-## In short
+| | What it is | Released | Code |
+|---|---|---|---|
+| [**HalluScope**](#halluscope-why-do-models-hallucinate) | A benchmark that finds out *why* vision-language models (LVLMs) describe objects that are not in the image | Test sets in [`halluscope/benchmark/`](halluscope/benchmark/README.md) | [`halluscope/`](halluscope/README.md): builds the benchmark and evaluates a model on it |
+| [**HalluVL-DPO**](#halluvl-dpo-training-models-to-resist-misleading-questions) | Training data and method that reduce the main cause found with HalluScope | Preference datasets on [Hugging Face](https://huggingface.co/datasets/PekhPekhPekh/HalluVL-DPO) | [`halluvl/dpo/`](halluvl/dpo/README.md): the pipeline that builds the preference data |
+
+## The problem
 
 Vision-language models sometimes "see" objects that are not there. Existing benchmarks count these errors but do not say where they come from. There are three usual suspects:
 
@@ -21,7 +26,9 @@ Vision-language models sometimes "see" objects that are not there. Existing benc
 2. **Co-occurrence habits:** the model expects objects that usually appear together (a fork next to a plate).
 3. **The question itself:** the question assumes an object is there ("What color is the cat?"), and the model goes along with it.
 
-**HalluScope** separates them by asking four kinds of questions about each COCO image:
+## HalluScope: why do models hallucinate?
+
+HalluScope separates the three causes by asking four kinds of questions about each COCO image:
 
 | Question type | Example | Correct answer | What it tests |
 |---|---|---|---|
@@ -34,7 +41,13 @@ The absent objects are chosen among objects that often appear with the image's o
 
 **What we found:** across five popular models (InternVL3.5, Molmo, Qwen2-VL, Qwen2.5-VL, LLaVA-1.5), perception is mostly fine: yes/no questions about present or random objects are answered correctly over 85% of the time. Accuracy drops on absent objects typical of the scene, and **drops much further when the question assumes the absent object is there**. The question is the strongest cause of hallucination, more than co-occurrence habits or the vision encoder.
 
-**HalluVL-DPO** targets that cause. It is a set of about 20k answer pairs: for each image and question, a *grounded* answer and a *hallucinated* one, both written by the model being trained. Training the model to prefer the grounded answer (Direct Preference Optimization, DPO) makes it much better at rejecting false assumptions in questions, while its scores on general benchmarks stay close to the original model.
+**Get the benchmark:** [`halluscope/benchmark/`](halluscope/benchmark/README.md) has two versions: **v1**, used for all results in the paper, and **v2**, regenerated with the released code. Images are from COCO `train2017`.
+
+**Code:** [`halluscope/`](halluscope/README.md) has the evaluation scripts (run any Hugging Face vision-language model on the benchmark and score it) and the full pipeline that builds the benchmark.
+
+## HalluVL-DPO: training models to resist misleading questions
+
+HalluVL-DPO targets the main cause found above. It is a set of about 20k answer pairs: for each image and question, a *grounded* answer and a *hallucinated* one, both written by the model being trained. Training the model to prefer the grounded answer (Direct Preference Optimization, DPO) makes it much better at rejecting false assumptions in questions, while its scores on general benchmarks stay close to the original model.
 
 The images are synthetic (generated with Stable Diffusion 3 from filtered captions), so we know exactly which objects are in each one. Example pairs, one per type:
 
@@ -100,12 +113,21 @@ The images are synthetic (generated with Stable Diffusion 3 from filtered captio
 
 Only pairs whose two answers are clearly different are kept. The paper also proposes a weighted variant, HalluVL-DPO<sup>w</sup>, where an LLM rates how different each pair is (1 to 3) and that rating weights the pair during training.
 
+**Get the data:** the preference datasets used in the paper, for LLaVA-1.5-7B and Qwen2-VL-7B, are on Hugging Face: [PekhPekhPekh/HalluVL-DPO](https://huggingface.co/datasets/PekhPekhPekh/HalluVL-DPO).
+
+**Code:** [`halluvl/dpo/`](halluvl/dpo/README.md) has the pipeline that builds the preference data, from captions to images, questions, answer pairs and the final mixture. It does not contain the data itself.
+
 ## Repository
 
-| Folder | Content |
-|---|---|
-| [`halluscope/`](halluscope/README.md) | The HalluScope benchmark ([`benchmark/`](halluscope/benchmark/README.md): v1 used in the paper, v2 regenerated with this code), the code that builds it, and the code to evaluate a model on it |
-| [`halluvl/dpo/`](halluvl/dpo/README.md) | The HalluVL-DPO preference dataset and the pipeline that built it |
+```
+├── halluscope/
+│   ├── benchmark/        HalluScope test sets (v1: paper, v2: regenerated)
+│   ├── src/              pipeline that builds the benchmark, and evaluation scripts
+│   └── README.md         how to evaluate a model and how the benchmark is built
+├── halluvl/
+│   └── dpo/              pipeline that builds the HalluVL-DPO preference data (data on Hugging Face)
+└── docs/images/          figures used in this README
+```
 
 ## Citation
 
@@ -117,3 +139,7 @@ Only pairs whose two answers are clearly different are kept. The paper also prop
   year      = {2026}
 }
 ```
+
+## License
+
+The code is released under the [MIT License](LICENSE).
