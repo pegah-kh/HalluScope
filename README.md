@@ -15,103 +15,103 @@ The paper has two contributions, and this repository has one part for each:
 
 | | What it is | Released | Code |
 |---|---|---|---|
-| [**HalluScope**](#halluscope-why-do-models-hallucinate) | A benchmark that finds out *why* vision-language models (LVLMs) describe objects that are not in the image | Test sets in [`halluscope/benchmark/`](halluscope/benchmark/README.md) | [`halluscope/`](halluscope/README.md): builds the benchmark and evaluates a model on it |
-| [**HalluVL-DPO**](#halluvl-dpo-training-models-to-resist-misleading-questions) | Training data and method that reduce the main cause found with HalluScope | Preference datasets on [Hugging Face](https://huggingface.co/datasets/PekhPekhPekh/HalluVL-DPO) | [`halluvl/dpo/`](halluvl/dpo/README.md): the pipeline that builds the preference data |
+| [**HalluScope**](#halluscope) | A benchmark that separates the causes of hallucination in large vision-language models (LVLMs) | Test sets in [`halluscope/benchmark/`](halluscope/benchmark/README.md) | [`halluscope/`](halluscope/README.md): builds the benchmark and evaluates a model on it |
+| [**HalluVL-DPO**](#halluvl-dpo) | A preference-optimization framework and dataset that reduces hallucinations caused by the text prompt | Preference datasets on [Hugging Face](https://huggingface.co/datasets/PekhPekhPekh/HalluVL-DPO) | [`halluvl/dpo/`](halluvl/dpo/README.md): the pipeline that builds the preference data |
 
 ## The problem
 
-Vision-language models sometimes "see" objects that are not there. Existing benchmarks count these errors but do not say where they come from. There are three usual suspects:
+LVLMs often describe things that are not in the image. Usual benchmarks (POPE, CHAIR, MMHal-Bench) count these errors but cannot tell where they come from:
 
-1. **Perception:** the model does not see the image correctly.
-2. **Co-occurrence habits:** the model expects objects that usually appear together (a fork next to a plate).
-3. **The question itself:** the question assumes an object is there ("What color is the cat?"), and the model goes along with it.
+1. **Perception:** the vision encoder missing something.
+2. **Co-occurrence priors:** the model's knowledge of which objects usually appear together.
+3. **The prompt:** the prompt itself assuming something is there.
 
-## HalluScope: why do models hallucinate?
+## HalluScope
 
-HalluScope separates the three causes by asking four kinds of questions about each COCO image:
+HalluScope asks four kinds of questions about COCO images, each probing one cause:
 
 | Question type | Example | Correct answer | What it tests |
 |---|---|---|---|
-| Positive recognition | "Is there a baseball bat in the image?" (it is there) | yes | perception |
-| Random recognition | "Is there a statue in the image?" (absent, unrelated to the scene) | no | perception |
-| Adversarial recognition | "Does the image contain a baseball cap?" (absent, but typical of the scene) | no | co-occurrence habits |
-| Adversarial presupposition | "What logo appears on the baseball cap worn by the batter?" (the same absent cap) | say there is no cap | influence of the question |
+| Positive recognition | "Is there a baseball bat in the image?" (present) | yes | visual perception |
+| Random recognition | "Is there a statue in the image?" (absent, unrelated) | no | visual perception |
+| Adversarial recognition | "Does the image contain a baseball cap?" (absent, but typical of the scene) | no | reliance on object co-occurrence |
+| Adversarial presupposition (AdP) | "What logo appears on the baseball cap worn by the batter?" | not asserting the cap | reliance on what the prompt assumes |
 
-The absent objects are chosen among objects that often appear with the image's objects, and their absence is double-checked with an object detector (Grounding DINO) and a vision-language model. The benchmark has two subsets of 3,000 images.
+Adversarial objects are chosen with co-occurrence statistics (pointwise mutual information) over verified object labels, and their absence is checked with Grounding-DINO plus a VLM. The benchmark has 3k images in each of two subsets (objects from COCO instances or from Florence-2).
 
-**What we found:** across five popular models (InternVL3.5, Molmo, Qwen2-VL, Qwen2.5-VL, LLaVA-1.5), perception is mostly fine: yes/no questions about present or random objects are answered correctly over 85% of the time. Accuracy drops on absent objects typical of the scene, and **drops much further when the question assumes the absent object is there**. The question is the strongest cause of hallucination, more than co-occurrence habits or the vision encoder.
+**Finding.** Across InternVL3.5-8B, Molmo-7B-D, Qwen2-VL-7B, Qwen2.5-VL-7B and LLaVA-1.5-7B, positive and random recognition stay above 85%: perception is mostly fine. Accuracy drops by about 8–37 points on adversarial objects, and by 25–85 points when the question presupposes the object. **The text prompt is the strongest driver of hallucination**, more than co-occurrence priors or the vision backbone.
 
 **Get the benchmark:** [`halluscope/benchmark/`](halluscope/benchmark/README.md) has two versions: **v1**, used for all results in the paper, and **v2**, regenerated with the released code. Images are from COCO `train2017`.
 
 **Code:** [`halluscope/`](halluscope/README.md) has the evaluation scripts (run any Hugging Face vision-language model on the benchmark and score it) and the full pipeline that builds the benchmark.
 
-## HalluVL-DPO: training models to resist misleading questions
+## HalluVL-DPO
 
-HalluVL-DPO targets the main cause found above. It is a set of about 20k answer pairs: for each image and question, a *grounded* answer and a *hallucinated* one, both written by the model being trained. Training the model to prefer the grounded answer (Direct Preference Optimization, DPO) makes it much better at rejecting false assumptions in questions, while its scores on general benchmarks stay close to the original model.
+HalluVL-DPO fine-tunes a model with DPO to prefer grounded answers over hallucinated ones. The target model itself writes both answers, which keeps the data close to its own distribution. Queries are presupposition questions about present (TPQ) or absent (CPQ) objects, POPE-style yes/no questions and detailed descriptions. The final set has about 20k pairs in a CPQ:TPQ:POPE:description:attribute ratio of 5:5:6:9:5. Gains carry over to CP-Bench, CHAIR and HallusionBench, while POPE, MME, ScienceQA and MM-Vet stay close to the original models.
 
-The images are synthetic (generated with Stable Diffusion 3 from filtered captions), so we know exactly which objects are in each one. Example pairs, one per type:
+The training data is built from 27.4k synthetic images (Stable Diffusion 3 from filtered CC3M captions, objects verified with Grounding-DINO). Example pairs, one per type:
 
 <table>
   <tr><th>Image</th><th>Pair type</th><th>Question</th><th>Preferred (grounded)</th><th>Rejected (hallucinated)</th></tr>
   <tr>
     <td><img src="docs/images/cpq.jpg" width="140"></td>
-    <td><b>Question about an absent object</b> (CPQ)</td>
+    <td><b>CPQ</b>: presupposition question about an absent object</td>
     <td>What color is the spatula resting near the skillet?</td>
     <td>There is no spatula in the image.</td>
     <td>The spatula resting near the skillet is black.</td>
   </tr>
   <tr>
     <td><img src="docs/images/tpq.jpg" width="140"></td>
-    <td><b>Question about a present object</b> (TPQ)</td>
+    <td><b>TPQ</b>: presupposition question about a present object</td>
     <td>What color is the bird?</td>
     <td>It has a black head with a white stripe, a yellow body with orange and red accents, and a black beak.</td>
     <td>The bird is not shown in the image.</td>
   </tr>
   <tr>
     <td><img src="docs/images/pope.jpg" width="140"></td>
-    <td><b>Yes/no, present object</b> (POPE)</td>
+    <td><b>POPE</b>: yes/no question, present object</td>
     <td>Do you see a elf on the shelf in the picture?</td>
     <td>Yes, there is an elf on the shelf in the picture. The elf is sitting next to a snowman.</td>
     <td>No, there is no elf on the shelf in the picture.</td>
   </tr>
   <tr>
     <td><img src="docs/images/pope_negative.jpg" width="140"></td>
-    <td><b>Yes/no, absent object</b> (POPE)</td>
+    <td><b>POPE</b>: yes/no question, absent object</td>
     <td>Would you say there's a ladder visible?</td>
     <td>There is no ladder visible in the image.</td>
     <td>Yes, there is a ladder visible in the image. It is located on the side of the building.</td>
   </tr>
   <tr>
     <td><img src="docs/images/attribute.jpg" width="140"></td>
-    <td><b>Wrong attributes</b>: an LLM rewrites a correct answer with wrong details</td>
+    <td><b>Model-assisted answer inversion</b> (attribute): an LLM rewrites a correct TPQ answer with wrong attributes</td>
     <td>What is the condition of the road surface?</td>
     <td>The road surface appears to be wet, likely due to recent or ongoing rain.</td>
     <td>The road surface appears dry and dusty, with a matte finish and no visible reflections or puddles.</td>
   </tr>
   <tr>
     <td><img src="docs/images/description_unilateral.jpg" width="140"></td>
-    <td><b>Description, one-sided hint</b>: a false hint is added to the question to get the hallucinated answer</td>
+    <td><b>Unilateral hint</b> (description): a true or false hint about an object is added to the query to obtain a grounded or a hallucinated answer</td>
     <td>Could you offer a thorough description of the image?</td>
     <td>The image features a man playing a <b>trumpet</b> in a clean studio setting. …</td>
     <td>The image features a man playing a <b>trombone</b>, with the instrument held in his hands. …</td>
   </tr>
   <tr>
     <td><img src="docs/images/description_contrastive.jpg" width="140"></td>
-    <td><b>Description, opposite hints</b>: a true hint for one answer, a false hint for the other</td>
+    <td><b>Contrastive hint</b> (description): opposite hints for both answers, which avoids the length bias the unilateral hint causes on descriptions</td>
     <td>Provide a detailed description of the image?</td>
     <td>The image features a dense forest with a large number of trees, including a couple of very tall trees. …</td>
     <td>The image features a lush green forest with a <b>trail</b> running through it. Along the trail, there is a <b>bench</b> … A <b>stream</b> can be seen nearby. …</td>
   </tr>
   <tr>
     <td><img src="docs/images/description_injection.jpg" width="140"></td>
-    <td><b>Description, injected hallucination</b>: one sentence is replaced by a false one, and the model writes the rest</td>
+    <td><b>Post-hoc hallucination injection</b> (description): one sentence of the model's description, more likely a later one, is replaced by a phrase asserting an absent object, and the model completes the rest</td>
     <td>Can you describe what you see in the image?</td>
     <td>The image depicts a view looking up through the canopy of tall trees … The sky is visible through the gaps in the leaves. …</td>
     <td>The image depicts a view looking up through the canopy of tall trees … The scene includes a <b>campfire</b>, which is positioned in the lower left corner of the image. …</td>
   </tr>
 </table>
 
-Only pairs whose two answers are clearly different are kept. The paper also proposes a weighted variant, HalluVL-DPO<sup>w</sup>, where an LLM rates how different each pair is (1 to 3) and that rating weights the pair during training.
+Only pairs whose answers are far apart in embedding space are kept. The paper also proposes a weighted variant (HalluVL-DPO<sup>w</sup>) where an LLM scores each pair's semantic gap from 1 to 3 to weight it in the loss.
 
 **Get the data:** the preference datasets used in the paper, for LLaVA-1.5-7B and Qwen2-VL-7B, are on Hugging Face: [PekhPekhPekh/HalluVL-DPO](https://huggingface.co/datasets/PekhPekhPekh/HalluVL-DPO).
 
